@@ -19,145 +19,129 @@ namespace Hotel.Controllers
             _context = context;
         }
 
-        // GET: DichVu
+        public void taoMaDv()
+        {
+            var dichVu = _context.DichVus.OrderByDescending(dv => dv.Id).FirstOrDefault();
+            if (dichVu != null)
+            {
+                ViewData["MaDv"] = "DV" + dichVu.Id.ToString();
+            }
+            else
+            {
+                ViewData["MaDv"] = "DV1";
+            }
+        }
+
         public async Task<IActionResult> Index()
         {
-              return _context.DichVus != null ? 
-                          View(await _context.DichVus.ToListAsync()) :
-                          Problem("Entity set 'QlksdbContext.DichVus'  is null.");
+            return _context.DichVus != null
+                ? View(await _context.DichVus.ToListAsync())
+                : Problem("Chưa có Dịch vụ nào được thêm!");
         }
 
-        // GET: DichVu/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
         {
-            if (id == null || _context.DichVus == null)
-            {
-                return NotFound();
-            }
-
-            var dichVuModel = await _context.DichVus
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (dichVuModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(dichVuModel);
+            return View("Error!");
         }
 
-        // GET: DichVu/Create
         public IActionResult Create()
         {
+            taoMaDv();
             return View();
         }
 
-        // POST: DichVu/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MaDv,TenDv,DonGia,SoLuong,HinhAnh")] DichVuModel dichVuModel)
+        public async Task<IActionResult> Create(
+            [Bind("Id,MaDv,HinhAnh,TenDv,DonGia,SoLuong")] DichVuModel dichvu
+        )
         {
             if (ModelState.IsValid)
             {
-                _context.Add(dichVuModel);
+                System.Console.WriteLine("ok");
+                _context.Add(dichvu);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(dichVuModel);
+            return View(dichvu);
         }
 
-        // GET: DichVu/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null || _context.DichVus == null)
             {
                 return NotFound();
             }
-
-            var dichVuModel = await _context.DichVus.FindAsync(id);
-            if (dichVuModel == null)
+            var dichVu = _context.DichVus.Find(id);
+            if (dichVu == null)
             {
                 return NotFound();
             }
-            return View(dichVuModel);
+            return View(dichVu);
         }
 
-        // POST: DichVu/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,MaDv,TenDv,DonGia,SoLuong,HinhAnh")] DichVuModel dichVuModel)
+        public async Task<IActionResult> Edit(int id, DichVuModel dichvu)
         {
-            if (id != dichVuModel.Id)
+            if (id != dichvu.Id)
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(dichVuModel);
+                    _context.Update(dichvu);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DichVuModelExists(dichVuModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(dichVuModel);
+            return View(dichvu);
         }
 
-        // GET: DichVu/Delete/5
+        public IActionResult Detail(int? id)
+        {
+            if (id == null || _context.DatPhongs == null)
+            {
+                return NotFound();
+            }
+            var dichVu = _context.DichVus.Find(id);
+            if (dichVu == null)
+            {
+                return NotFound();
+            }
+            return View(dichVu);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.DichVus == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var dichVuModel = await _context.DichVus
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (dichVuModel == null)
+            if (_context.DatPhongs == null)
+            {
+                return Problem("Danh sách dich vu đã trống!");
+            }
+            var dichVu = await _context.DichVus.FirstOrDefaultAsync(dv => dv.Id == id);
+            if (dichVu != null)
+            {
+                _context.DichVus.Remove(dichVu);
+                await _context.SaveChangesAsync();
+            }
+            else
             {
                 return NotFound();
             }
-
-            return View(dichVuModel);
-        }
-
-        // POST: DichVu/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.DichVus == null)
-            {
-                return Problem("Entity set 'QlksdbContext.DichVus'  is null.");
-            }
-            var dichVuModel = await _context.DichVus.FindAsync(id);
-            if (dichVuModel != null)
-            {
-                _context.DichVus.Remove(dichVuModel);
-            }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool DichVuModelExists(int id)
-        {
-          return (_context.DichVus?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

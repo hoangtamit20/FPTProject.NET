@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Hotel.Data;
 using Hotel.Models;
+
 
 namespace Hotel.Controllers
 {
@@ -20,10 +17,41 @@ namespace Hotel.Controllers
         }
 
         // GET: Phong
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string searchString,
+            string currentFilter,
+            int? pageNumber
+        )
         {
-            var qlksdbContext = _context.Phongs.Include(p => p.MaLpNavigation).Include(p => p.MaTvpNavigation);
-            return View(await qlksdbContext.ToListAsync());
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+            var phongs = (from p in _context.Phongs orderby p.SoPhong descending select p)
+                .Include(k => k.MaLpNavigation)
+                .Include(k => k.MaTvpNavigation);
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                phongs = phongs
+                    .Where(p => p.SoPhong.ToString().Contains(searchString))
+                    .OrderByDescending(p => p.SoPhong)
+                    .Include(k => k.MaLpNavigation)
+                    .Include(k => k.MaTvpNavigation);
+            }
+            int pageSize = 2;
+            return View(
+                await PaginatedList<PhongModel>.CreateAsync(
+                    phongs.AsNoTracking(),
+                    pageNumber ?? 1,
+                    pageSize
+                )
+            );
         }
 
         // GET: Phong/Details/5
@@ -33,24 +61,22 @@ namespace Hotel.Controllers
             {
                 return NotFound();
             }
-
-            var phongModel = await _context.Phongs
+            var phong = await _context.Phongs
                 .Include(p => p.MaLpNavigation)
                 .Include(p => p.MaTvpNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (phongModel == null)
+            if (phong == null)
             {
                 return NotFound();
             }
-
-            return View(phongModel);
+            return View(phong);
         }
 
         // GET: Phong/Create
         public IActionResult Create()
         {
-            ViewData["MaLp"] = new SelectList(_context.LoaiPhongs, "MaLp", "MaLp");
-            ViewData["MaTvp"] = new SelectList(_context.TacVuPhongs, "MaTvp", "MaTvp");
+            ViewData["MaLp"] = new SelectList(_context.LoaiPhongs, "MaLp", "TenLp");
+            ViewData["MaTvp"] = new SelectList(_context.TacVuPhongs, "MaTvp", "TenTvp");
             return View();
         }
 
@@ -59,17 +85,27 @@ namespace Hotel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MaP,SoPhong,HinhAnh,MaLp,MaTvp,TrangThaiPhong,MoTa,LoaiGiuong,CreatedAt,UpdatedAt")] PhongModel phongModel)
+        public async Task<IActionResult> Create(
+            [Bind("Id,MaP,SoPhong,HinhAnh,MaLp,MaTvp,TrangThaiPhong, MoTa, LoaiGiuong")] PhongModel phong
+        )
         {
+            phong.CreatedAt = DateTime.Now;
             if (ModelState.IsValid)
             {
-                _context.Add(phongModel);
+                // ModelState.AddModelError("abc", "Loi");
+                _context.Add(phong);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MaLp"] = new SelectList(_context.LoaiPhongs, "MaLp", "MaLp", phongModel.MaLp);
-            ViewData["MaTvp"] = new SelectList(_context.TacVuPhongs, "MaTvp", "MaTvp", phongModel.MaTvp);
-            return View(phongModel);
+            ViewData["MaLp"] = new SelectList(_context.LoaiPhongs, "MaLp", "TenLp", phong.MaLp);
+            ViewData["MaTvp"] = new SelectList(
+                _context.TacVuPhongs,
+                "MaTvp",
+                "TenTvp",
+                phong.MaTvp
+            );
+
+            return View(phong);
         }
 
         // GET: Phong/Edit/5
@@ -80,14 +116,19 @@ namespace Hotel.Controllers
                 return NotFound();
             }
 
-            var phongModel = await _context.Phongs.FindAsync(id);
-            if (phongModel == null)
+            var phong = await _context.Phongs.FindAsync(id);
+            if (phong == null)
             {
                 return NotFound();
             }
-            ViewData["MaLp"] = new SelectList(_context.LoaiPhongs, "MaLp", "MaLp", phongModel.MaLp);
-            ViewData["MaTvp"] = new SelectList(_context.TacVuPhongs, "MaTvp", "MaTvp", phongModel.MaTvp);
-            return View(phongModel);
+            ViewData["MaLp"] = new SelectList(_context.LoaiPhongs, "MaLp", "TenLp", phong.MaLp);
+            ViewData["MaTvp"] = new SelectList(
+                _context.TacVuPhongs,
+                "MaTvp",
+                "TenTvp",
+                phong.MaTvp
+            );
+            return View(phong);
         }
 
         // POST: Phong/Edit/5
@@ -95,23 +136,26 @@ namespace Hotel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,MaP,SoPhong,HinhAnh,MaLp,MaTvp,TrangThaiPhong,MoTa,LoaiGiuong,CreatedAt,UpdatedAt")] PhongModel phongModel)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("Id,MaP,SoPhong,HinhAnh,TrangThaiPhong,MaLp,MaTvp,MoTa, LoaiGiuong")] PhongModel phong
+        )
         {
-            if (id != phongModel.Id)
+            phong.UpdatedAt = DateTime.Now;
+            if (id != phong.Id)
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(phongModel);
+                    _context.Update(phong);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PhongModelExists(phongModel.Id))
+                    if (!PhongExists(phong.Id))
                     {
                         return NotFound();
                     }
@@ -122,29 +166,14 @@ namespace Hotel.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MaLp"] = new SelectList(_context.LoaiPhongs, "MaLp", "MaLp", phongModel.MaLp);
-            ViewData["MaTvp"] = new SelectList(_context.TacVuPhongs, "MaTvp", "MaTvp", phongModel.MaTvp);
-            return View(phongModel);
-        }
-
-        // GET: Phong/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Phongs == null)
-            {
-                return NotFound();
-            }
-
-            var phongModel = await _context.Phongs
-                .Include(p => p.MaLpNavigation)
-                .Include(p => p.MaTvpNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (phongModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(phongModel);
+            ViewData["MaLp"] = new SelectList(_context.LoaiPhongs, "MaLp", "TenLp", phong.MaLp);
+            ViewData["MaTvp"] = new SelectList(
+                _context.TacVuPhongs,
+                "MaTvp",
+                "TenTvp",
+                phong.MaTvp
+            );
+            return View(phong);
         }
 
         // POST: Phong/Delete/5
@@ -154,21 +183,29 @@ namespace Hotel.Controllers
         {
             if (_context.Phongs == null)
             {
-                return Problem("Entity set 'QlksdbContext.Phongs'  is null.");
+                return Problem("Entity set 'QlksContext.Phongs'  is null.");
             }
-            var phongModel = await _context.Phongs.FindAsync(id);
-            if (phongModel != null)
+            try
             {
-                _context.Phongs.Remove(phongModel);
+                var phong = await _context.Phongs.FindAsync(id);
+                ViewData["error"] = "Méo lỗi";
+                if (phong != null)
+                {
+                    _context.Phongs.Remove(phong);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                ViewData["error"] = "Phòng đã đặt không thể xoá!";
+            }
+            return View();
         }
 
-        private bool PhongModelExists(int id)
+        private bool PhongExists(int id)
         {
-          return (_context.Phongs?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Phongs?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -6,7 +6,7 @@
 
 <h1>Edit</h1>
 
-<h4>PhongModel</h4>
+<h4>Phong</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -15,8 +15,7 @@
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="MaP" class="control-label"></label>
-                <input asp-for="MaP" class="form-control" />
-                <span asp-validation-for="MaP" class="text-danger"></span>
+                <input asp-for="MaP" class="form-control" readonly/>
             </div>
             <div class="form-group">
                 <label asp-for="SoPhong" class="control-label"></label>
@@ -29,39 +28,58 @@
                 <span asp-validation-for="HinhAnh" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MaLp" class="control-label"></label>
+                <label asp-for="TrangThaiPhong" class="control-label"></label>
+                <select name="TrangThaiPhong" class="form-control">
+                    @if (Model.TrangThaiPhong == 1)
+                    {
+                        <option value="1" selected>Đang Rảnh</option>
+                        <option value="2">Đang Bận</option>
+                        <option value="0">Đã Đặt</option>
+
+                    }
+                    else if (Model.TrangThaiPhong == 2)
+                    {
+                        <option value="1">Đang Rảnh</option>
+                        <option value="2" selected>Đang Bận</option>
+                        <option value="0">Đã Đặt</option>
+                    }
+                    else
+                    {
+                        <option value="1">Đang Rảnh</option>
+                        <option value="2">Đang Bận</option>
+                        <option value="0" selected>Đã Đặt</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="LoaiGiuong" class="control-label"></label>
+                <select name="LoaiGiuong" class="form-control">
+                    @if (Model.LoaiGiuong == true)
+                    {
+                        <option value="true" selected>Giường Đơn</option>
+                        <option value="false">Giường Đôi</option>
+                    }
+                    else
+                    {
+                        <option value="true">Giường Đơn</option>
+                        <option value="false" selected>Giường Đôi</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Loại</label>
                 <select asp-for="MaLp" class="form-control" asp-items="ViewBag.MaLp"></select>
                 <span asp-validation-for="MaLp" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MaTvp" class="control-label"></label>
+                <label class="control-label">Tình Trạng</label>
                 <select asp-for="MaTvp" class="form-control" asp-items="ViewBag.MaTvp"></select>
                 <span asp-validation-for="MaTvp" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrangThaiPhong" class="control-label"></label>
-                <input asp-for="TrangThaiPhong" class="form-control" />
-                <span asp-validation-for="TrangThaiPhong" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="MoTa" class="control-label"></label>
                 <input asp-for="MoTa" class="form-control" />
                 <span asp-validation-for="MoTa" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="LoaiGiuong" /> @Html.DisplayNameFor(model => model.LoaiGiuong)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

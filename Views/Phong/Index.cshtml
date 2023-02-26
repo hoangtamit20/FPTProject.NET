@@ -1,89 +1,174 @@
-@model IEnumerable<Hotel.Models.PhongModel>
+@model PaginatedList<Hotel.Models.PhongModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<body>
+    <div class="container-fluid pt-4">
+        <div class="row">
+            <div class="titleCreate col d-flex">
+                <p class="fs-4 fw-bolder">Quản Lý Phòng</p>
+                <a asp-action="Create"
+                    class="btn btn-dark btn-sm ms-auto text-center"
+                    style="height:2.5em ; width:10rem">Tạo Phòng</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <form asp-action="Index" method="get" id="form-search">
+                    <div class="form-actions no-color">
+                        <p>
+                            Tìm Kiếm: <input type="text" name="SearchString"
+                                value='@ViewData["CurrentFilter"]'
+                                id="searchInput" />
+                            <a asp-action="Index"
+                                class="back-search">Back</a>
+                        </p>
+                    </div>
+                </form>
+                <table class="table table-borderbg-light">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                @Html.DisplayNameFor(model
+                                =>
+                                model.FirstOrDefault().MaP)
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MaP)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SoPhong)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HinhAnh)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TrangThaiPhong)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MoTa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LoaiGiuong)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaLpNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaTvpNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaP)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SoPhong)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HinhAnh)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TrangThaiPhong)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MoTa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LoaiGiuong)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaLpNavigation.MaLp)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaTvpNavigation.MaTvp)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                            </th>
+                            <th scope="col">
+                                @Html.DisplayNameFor(model
+                                =>
+                                model.FirstOrDefault().SoPhong)
+                            </th>
+                            <th scope="col">
+                                @Html.DisplayNameFor(model
+                                =>
+                                model.FirstOrDefault().HinhAnh)
+                            </th>
+                            <th scope="col">
+                                @Html.DisplayNameFor(model
+                                =>
+                                model.FirstOrDefault().TrangThaiPhong)
+                            </th>
+                            <th scope="col">
+                                Loại Phòng
+                            </th>
+                            <th scope="col">
+                                Tình Trạng
+                            </th>
+                            <th scope="col">
+                                @Html.DisplayNameFor(model
+                                =>
+                                model.FirstOrDefault().MoTa)
+                            </th>
+                            <th>
+                                Công Cụ
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem
+                                => item.MaP)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem
+                                => item.SoPhong)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem
+                                => item.HinhAnh)
+                                </td>
+                                <td>
+                                    @if
+                                   (item.TrangThaiPhong == 1)
+                                    {
+                                        <div class="badge bg-success p-2 text-wrap"
+                                            style="width: 6rem;">
+                                            Đang Rảnh
+                                        </div>
+                                        <td>Bình Thường</td>
+                                    }
+                                    else if (item.TrangThaiPhong == 2)
+                                    {
+                                        <div class="badge bg-warning p-2 text-wrap"
+                                            style="width: 6rem;">
+                                            Đang Bận
+                                        </div>
+                                        <td>
+                                            @Html.DisplayFor(modelItem
+                                    => item.MaTvpNavigation.TenTvp)
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <div class="badge bg-danger p-2 text-wrap"
+                                            style="width: 6rem;">
+                                            Đã Đặt
+                                        </div>
+                                        <td>Bình Thường</td>
+                                    }
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem
+                                => item.MaLpNavigation.TenLp)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem
+                                => item.MoTa)
+                                </td>
+                                <td>
+                                    <a asp-action="Edit"
+                                    asp-route-id="@item.Id"><i
+                                            class="bi bi-pencil-square"></i></a>
+                                    |
+                                    <a asp-action="Details"
+                                    asp-route-id="@item.Id"><i
+                                            class="bi bi-eye-fill"></i></a>
+                                    |
+                                    <a href="#" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal"
+                                        data-id="@item.Id"
+                                        class="delete"><i
+                                            class="bi bi-archive-fill"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <!-- Modal -->
+
+            </div>
+        </div>
+    </div>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home" role="tabpanel"
+            aria-labelledby="home-tab">
+            <br />
+            @{
+                var prevDisabled = !Model.HasPreviousPage ?
+                "disabled" : "";
+                var nextDisabled = !Model.HasNextPage ?
+                "disabled" : "";
+            }
+            <a asp-action="Index"
+                asp-route-sortOrder='@ViewData["CurrentSort"]'
+                asp-route-pageNumber="@(Model.PageIndex - 1)"
+                asp-route-currentFilter='@ViewData["CurrentFilter"]'
+                class="btn btn-default @prevDisabled">
+                Previous
+            </a>
+            <a asp-action="Index"
+                asp-route-sortOrder='@ViewData["CurrentSort"]'
+                asp-route-pageNumber="@(Model.PageIndex + 1)"
+                asp-route-currentFilter='@ViewData["CurrentFilter"]'
+                class="btn btn-default @nextDisabled">
+                Next
+            </a>
+        </div>
+    </div>
+</body>

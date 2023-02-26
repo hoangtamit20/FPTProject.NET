@@ -3,57 +3,43 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MaDdv)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SoLuong)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayDatDichVu)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaDpNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaDvNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaDdv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SoLuong)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NgayDatDichVu)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaDpNavigation.MaDp)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaDvNavigation.MaDv)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="row mt-4 px-4">
+    <div class="titleCreate col d-flex">
+        <p class="fs-4 fw-bolder">Quản Lý Danh Sách Đặt Dịch Vụ</p>
+        @Html.ActionLink("Đặt Dịch Vụ","Index","DatPhong", null, new {@class = "btn btn-dark btn-sm ms-auto text-center", @style="height:2.5em ; width:8rem"})
+    </div>
+</div>
+<div class="row px-4">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Mã Đặt Dịch Vụ</th>
+                <th scope="col">Số Lượng</th>
+                <th scope="col">Ngày Đặt Dịch Vụ</th>
+                <th scope="col">Công Cụ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int soTT = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th scope="row">@(soTT++)</th>
+                    <td>@Html.DisplayFor(modelItem => item.MaDv)</td>
+                    <td>@item.MaDdv</td>
+                    <td>@item.SoLuong</td>
+                    <td>@item.NgayDatDichVu</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Sửa</a>
+                        <a asp-action="Detail" asp-route-id="@item.Id">Xem</a>
+                        <a href="" data-id="@item.Id" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal" class="delete">Xoá</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

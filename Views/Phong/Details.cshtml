@@ -7,68 +7,78 @@
 <h1>Details</h1>
 
 <div>
-    <h4>PhongModel</h4>
+    <h4>Phong</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.MaP)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.MaP)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.SoPhong)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.SoPhong)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.HinhAnh)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.HinhAnh)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TrangThaiPhong)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TrangThaiPhong)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MoTa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MoTa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LoaiGiuong)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LoaiGiuong)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedAt)
-        </dd>
-        <dt class = "col-sm-2">
+        @if (Model.TrangThaiPhong == 1)
+        {
+            <dd class="col-sm-10">
+                Đang Rảnh
+            </dd>
+        }
+        else if (Model.TrangThaiPhong == 2)
+        {
+            <dd class="col-sm-10">
+                Đang Bận
+            </dd>
+        }
+        else
+        {
+            <dd class="col-sm-10">
+                Đã Đặt
+            </dd>
+        }
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.MaLpNavigation)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MaLpNavigation.MaLp)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MaLpNavigation.TenLp)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.MaTvpNavigation)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MaTvpNavigation.MaTvp)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MaTvpNavigation.TenTvp)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MoTa)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MoTa)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LoaiGiuong)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Convert.ToBoolean(Model.LoaiGiuong) == true)
+            {
+                <p>Giường Đơn</p>
+            }
+            else
+            {
+                <p>Giường Đôi</p>
+            }
         </dd>
     </dl>
 </div>

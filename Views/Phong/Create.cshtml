@@ -3,15 +3,13 @@
 @{
     ViewData["Title"] = "Create";
 }
-
-<h1>Create</h1>
-
-<h4>PhongModel</h4>
-<hr />
-<div class="row">
+<div class="row px-2 mt-2">
+    <h3>Tạo Phòng</h3>
+    <hr />
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @* @Html.ValidationSummary(false, "", "text-danger") *@
             <div class="form-group">
                 <label asp-for="MaP" class="control-label"></label>
                 <input asp-for="MaP" class="form-control" />
@@ -24,31 +22,36 @@
             </div>
             <div class="form-group">
                 <label asp-for="HinhAnh" class="control-label"></label>
-                <input asp-for="HinhAnh" class="form-control" />
+                <input asp-for="HinhAnh" class="form-control" type="file"/>
                 <span asp-validation-for="HinhAnh" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MaLp" class="control-label"></label>
-                <select asp-for="MaLp" class ="form-control" asp-items="ViewBag.MaLp"></select>
+                <label for="" class="control-label">Loại Phòng</label>
+                <select asp-for="MaLp" class="form-control" asp-items="ViewBag.MaLp"></select>
             </div>
             <div class="form-group">
-                <label asp-for="MaTvp" class="control-label"></label>
-                <select asp-for="MaTvp" class ="form-control" asp-items="ViewBag.MaTvp"></select>
+                <label for="" class="control-label">Tình Trạng Phòng</label>
+                <select asp-for="MaTvp" class="form-control" asp-items="ViewBag.MaTvp"></select>
             </div>
             <div class="form-group">
-                <label asp-for="TrangThaiPhong" class="control-label"></label>
-                <input asp-for="TrangThaiPhong" class="form-control" />
-                <span asp-validation-for="TrangThaiPhong" class="text-danger"></span>
+                <label for="" class="control-label">Trạng Thái</label>
+                <select name="TrangThaiPhong" class="form-control">
+                    <option value="1">Đang rảnh</option>
+                    <option value="2">Đang bận</option>
+                    <option value="0">Đã đặt</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="" class="control-label">Loại Giường</label>
+                <select name="loaiGiuong" class="form-control">
+                    <option value="true">Giường Đơn</option>
+                    <option value="false">Giường Đôi</option>
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="MoTa" class="control-label"></label>
                 <input asp-for="MoTa" class="form-control" />
                 <span asp-validation-for="MoTa" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="LoaiGiuong" /> @Html.DisplayNameFor(model => model.LoaiGiuong)
-                </label>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

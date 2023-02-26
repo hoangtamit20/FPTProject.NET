@@ -1,4 +1,4 @@
-@model Hotel.Models.DatPhongModel
+@* @model EF_MVC_Project.Models.Datphong
 
 @{
     ViewData["Title"] = "Details";
@@ -7,7 +7,7 @@
 <h1>Details</h1>
 
 <div>
-    <h4>DatPhongModel</h4>
+    <h4>Datphong</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -23,16 +23,16 @@
             @Html.DisplayFor(model => model.SoNguoi)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NgayBatDau)
+            @Html.DisplayNameFor(model => model.ThoiGianBatDau)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NgayBatDau)
+            @Html.DisplayFor(model => model.ThoiGianBatDau)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NgayKetThuc)
+            @Html.DisplayNameFor(model => model.ThoiGianKetThuc)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NgayKetThuc)
+            @Html.DisplayFor(model => model.ThoiGianKetThuc)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.MaKhNavigation)
@@ -51,4 +51,4 @@
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
-</div>
+</div> *@

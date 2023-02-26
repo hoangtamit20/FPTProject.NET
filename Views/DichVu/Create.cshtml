@@ -1,50 +1,53 @@
 @model Hotel.Models.DichVuModel
-
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
 
-<h4>DichVuModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="MaDv" class="control-label"></label>
-                <input asp-for="MaDv" class="form-control" />
-                <span asp-validation-for="MaDv" class="text-danger"></span>
+<div class="">
+<h3 class="my-2">Tạo Dịch Vụ Mới</h3>
+    <form asp-action="Create">
+        <div class="row">
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body m-2">
+                        <div class="row mb-3">
+                            <label asp-for="MaDv" class="form-label"></label>
+                            <input asp-for="MaDv" value='@ViewData["MaDv"]' class="form-control" readonly>
+                            <span asp-validation-for="MaDv" class="text-danger"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <label asp-for="TenDv" class="form-label"></label>
+                            <input asp-for="TenDv" class="form-control">
+                            <span asp-validation-for="TenDv" class="text-danger"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <label asp-for="DonGia" class="form-label"></label>
+                            <input asp-for="DonGia" class="form-control">
+                            <span asp-validation-for="DonGia" class="text-danger"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <label asp-for="SoLuong" class="form-label"></label>
+                            <input asp-for="SoLuong" class="form-control">
+                            <span asp-validation-for="SoLuong" class="text-danger"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <label asp-for="HinhAnh" class="form-label"></label>
+                            <input type="file" class="form-control">
+                            <span asp-validation-for="HinhAnh" class="text-danger"></span>
+                        </div>
+                        <div class="row mb-3">
+                            <button type="submit" class="btn btn-danger col me-2">Tạo Mới</button>
+                            <a asp-action="Index" class="btn btn-primary col">Quay Lại</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="TenDv" class="control-label"></label>
-                <input asp-for="TenDv" class="form-control" />
-                <span asp-validation-for="TenDv" class="text-danger"></span>
+            <div class="col">
+
             </div>
-            <div class="form-group">
-                <label asp-for="DonGia" class="control-label"></label>
-                <input asp-for="DonGia" class="form-control" />
-                <span asp-validation-for="DonGia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SoLuong" class="control-label"></label>
-                <input asp-for="SoLuong" class="form-control" />
-                <span asp-validation-for="SoLuong" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="HinhAnh" class="control-label"></label>
-                <input asp-for="HinhAnh" class="form-control" />
-                <span asp-validation-for="HinhAnh" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+<script>
+</script>

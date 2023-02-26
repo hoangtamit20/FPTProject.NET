@@ -19,156 +19,57 @@ namespace Hotel.Controllers
             _context = context;
         }
 
-        // GET: DatDichVu
-        public async Task<IActionResult> Index()
+        public void taoMaDdv()
         {
-            var qlksdbContext = _context.DatDichVus.Include(d => d.MaDpNavigation).Include(d => d.MaDvNavigation);
-            return View(await qlksdbContext.ToListAsync());
+            var datDv = _context.DatDichVus.OrderByDescending(dv => dv.Id).FirstOrDefault();
+            if (datDv != null)
+            {
+                ViewData["MaDdv"] = "DDV" + datDv.Id.ToString();
+            }
+            else
+            {
+                ViewData["MaDdv"] = "DDV1";
+            }
         }
 
-        // GET: DatDichVu/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Index()
         {
-            if (id == null || _context.DatDichVus == null)
+            System.Console.WriteLine("abc");
+            if (_context.DatDichVus == null)
             {
-                return NotFound();
+                return Problem("Chưa tồn tại phòng nào");
             }
-
-            var datDichVuModel = await _context.DatDichVus
-                .Include(d => d.MaDpNavigation)
-                .Include(d => d.MaDvNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (datDichVuModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(datDichVuModel);
+            var datDichVu = _context.DatDichVus.OrderByDescending(ddv => ddv.MaDdv).ToList();
+            return View(datDichVu);
         }
 
-        // GET: DatDichVu/Create
-        public IActionResult Create()
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
         {
-            ViewData["MaDp"] = new SelectList(_context.DatPhongs, "MaDp", "MaDp");
-            ViewData["MaDv"] = new SelectList(_context.DichVus, "MaDv", "MaDv");
+            return View("Error!");
+        }
+        [HttpGet]
+        public IActionResult Create(int? idDP)
+        {
+            var datP = _context.DatPhongs.FirstOrDefault(p => p.Id == idDP);
+            var phong = _context.Phongs.FirstOrDefault(dp=>dp.MaP == datP.MaP);
+            ViewData["MaDp"] = datP.MaDp;
+            ViewData["SoPhong"] = phong.SoPhong;
+            ViewData["MaDv"] = new SelectList(_context.DichVus, "MaDv", "TenDv");
+            taoMaDdv();
             return View();
         }
 
-        // POST: DatDichVu/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MaDdv,SoLuong,NgayDatDichVu,MaDv,MaDp")] DatDichVuModel datDichVuModel)
+        public async Task<IActionResult> Create(DatDichVuModel datdichvu)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(datDichVuModel);
+                _context.Add(datdichvu);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["MaDp"] = new SelectList(_context.DatPhongs, "MaDp", "MaDp", datDichVuModel.MaDp);
-            ViewData["MaDv"] = new SelectList(_context.DichVus, "MaDv", "MaDv", datDichVuModel.MaDv);
-            return View(datDichVuModel);
-        }
-
-        // GET: DatDichVu/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.DatDichVus == null)
-            {
-                return NotFound();
-            }
-
-            var datDichVuModel = await _context.DatDichVus.FindAsync(id);
-            if (datDichVuModel == null)
-            {
-                return NotFound();
-            }
-            ViewData["MaDp"] = new SelectList(_context.DatPhongs, "MaDp", "MaDp", datDichVuModel.MaDp);
-            ViewData["MaDv"] = new SelectList(_context.DichVus, "MaDv", "MaDv", datDichVuModel.MaDv);
-            return View(datDichVuModel);
-        }
-
-        // POST: DatDichVu/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,MaDdv,SoLuong,NgayDatDichVu,MaDv,MaDp")] DatDichVuModel datDichVuModel)
-        {
-            if (id != datDichVuModel.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(datDichVuModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DatDichVuModelExists(datDichVuModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["MaDp"] = new SelectList(_context.DatPhongs, "MaDp", "MaDp", datDichVuModel.MaDp);
-            ViewData["MaDv"] = new SelectList(_context.DichVus, "MaDv", "MaDv", datDichVuModel.MaDv);
-            return View(datDichVuModel);
-        }
-
-        // GET: DatDichVu/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.DatDichVus == null)
-            {
-                return NotFound();
-            }
-
-            var datDichVuModel = await _context.DatDichVus
-                .Include(d => d.MaDpNavigation)
-                .Include(d => d.MaDvNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (datDichVuModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(datDichVuModel);
-        }
-
-        // POST: DatDichVu/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.DatDichVus == null)
-            {
-                return Problem("Entity set 'QlksdbContext.DatDichVus'  is null.");
-            }
-            var datDichVuModel = await _context.DatDichVus.FindAsync(id);
-            if (datDichVuModel != null)
-            {
-                _context.DatDichVus.Remove(datDichVuModel);
-            }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool DatDichVuModelExists(int id)
-        {
-          return (_context.DatDichVus?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
