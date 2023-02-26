@@ -13,11 +13,11 @@ namespace Hotel.Base
     public class BaseController : Controller
     {
         protected readonly QlksdbContext _context;
-        public  BaseController(QlksdbContext context)
+        public BaseController(QlksdbContext context)
         {
             _context = context;
         }
-        
+
         public bool KiemTraPhanQuyen(string roleName)
         {
             // bool result = false;
@@ -31,6 +31,7 @@ namespace Hotel.Base
                 Int32.TryParse(strCookie.Split(";")[1], out roleId);
                 if (_context.TaiKhoans.Where(tk => tk.UserName == tenDN).FirstOrDefault() != null) // đã đăng nhập
                 {
+
                     if (!string.IsNullOrEmpty(roleName)) // trường sử dụng phân quyền để truy cập
                     {
                         if (roleName.Equals("Admin") && roleId == 99)
@@ -61,15 +62,15 @@ namespace Hotel.Base
                     xoaCookieDangNhap();
                     ModelState.AddModelError("", "Tài khoản đã không còn tồn tại trên hệ thống! Cookie đã được xóa bỏ!");
                 }
-
                 return true;
             }
             else
             {
+                System.Console.WriteLine("Da vao day!");
                 return false;
             }
-
         }
+
 
         public void xoaCookieDangNhap()
         {
@@ -85,22 +86,29 @@ namespace Hotel.Base
 
         public IActionResult ChuyenHuong()
         {
-            BaseClass bs = new BaseClass();
-            int roleId = Int32.Parse(bs.deCodeHash(HttpContext.Request.Cookies["DangNhap"]).Split(";")[1]);
-            System.Console.WriteLine(roleId);
-            if (roleId == 99)
+            if (HttpContext.Request.Cookies["DangNhap"] != null)
             {
-                return RedirectToAction("Index", "TaiKhoan");
+                BaseClass bs = new BaseClass();
+                int roleId = Int32.Parse(bs.deCodeHash(HttpContext.Request.Cookies["DangNhap"]).Split(";")[1]);
+                System.Console.WriteLine(roleId);
+                if (roleId == 99)
+                {
+                    return RedirectToAction("Index", "TaiKhoan");
+                }
+                else if (roleId == 1)
+                {
+                    return RedirectToAction("Index", "NhanVien");
+                }
+                else if (roleId == 0)
+                {
+                    return RedirectToAction("Index", "DatPhong");
+                }
+                return NotFound();
             }
-            else if (roleId == 1)
+            else
             {
-                return RedirectToAction("Index", "NhanVien");
+                return RedirectToAction("DangNhap", "TaiKhoan");
             }
-            else if (roleId == 0)
-            {
-                return RedirectToAction("Index", "DatPhong");
-            }
-            return NotFound();
         }
     }
 }

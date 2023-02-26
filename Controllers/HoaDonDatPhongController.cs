@@ -2,60 +2,72 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Hotel.Base;
+using Hotel.Data;
+using Hotel.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Hotel.Data;
-using Hotel.Models;
 
 namespace Hotel.Controllers
 {
-    public class HoaDonDatPhongController : Controller
+    public class HoaDonDatPhongController : BaseController
     {
-        private readonly QlksdbContext _context;
-
-        public HoaDonDatPhongController(QlksdbContext context)
+        public HoaDonDatPhongController(QlksdbContext context) : base(context)
         {
-            _context = context;
         }
 
         // GET: HoaDonDatPhong
         public async Task<IActionResult> Index()
         {
-            if (_context.HoaDonDatPhongs != null)
+            if (base.KiemTraPhanQuyen("Admin") || base.KiemTraPhanQuyen("NhanVien") || base.KiemTraPhanQuyen("QuanLy"))
             {
-                var qlksdbContext = _context.HoaDonDatPhongs.Include(h => h.MaDpNavigation).Include(h => h.MaNvNavigation);
-                return View(await qlksdbContext.ToListAsync());
+                // System.Console.WriteLine("da vao day!");
+                if (_context.HoaDonDatPhongs != null)
+                {
+                    var qlksdbContext = _context.HoaDonDatPhongs.Include(h => h.MaDpNavigation).Include(h => h.MaNvNavigation);
+                    return View(await qlksdbContext.ToListAsync());
+                }
+                return View();
             }
-            return View(); 
+            return base.ChuyenHuong();
         }
 
         // GET: HoaDonDatPhong/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.HoaDonDatPhongs == null)
-            {
-                return NotFound();
-            }
 
-            var hoaDonDatPhongModel = await _context.HoaDonDatPhongs
-                .Include(h => h.MaDpNavigation)
-                .Include(h => h.MaNvNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (hoaDonDatPhongModel == null)
+            if (base.KiemTraPhanQuyen("Admin") || base.KiemTraPhanQuyen("NhanVien") || base.KiemTraPhanQuyen("QuanLy"))
             {
-                return NotFound();
-            }
+                if (id == null || _context.HoaDonDatPhongs == null)
+                {
+                    return NotFound();
+                }
 
-            return View(hoaDonDatPhongModel);
+                var hoaDonDatPhongModel = await _context.HoaDonDatPhongs
+                    .Include(h => h.MaDpNavigation)
+                    .Include(h => h.MaNvNavigation)
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (hoaDonDatPhongModel == null)
+                {
+                    return NotFound();
+                }
+
+                return View(hoaDonDatPhongModel);
+            }
+            return base.ChuyenHuong();
         }
 
         // GET: HoaDonDatPhong/Create
         public IActionResult Create()
         {
-            ViewData["MaDp"] = new SelectList(_context.DatPhongs, "MaDp", "MaDp");
-            ViewData["MaNv"] = new SelectList(_context.NhanViens, "MaNv", "MaNv");
-            return View();
+            if (base.KiemTraPhanQuyen("Admin") || base.KiemTraPhanQuyen("QuanLy"))
+            {
+                ViewData["MaDp"] = new SelectList(_context.DatPhongs, "MaDp", "MaDp");
+                ViewData["MaNv"] = new SelectList(_context.NhanViens, "MaNv", "MaNv");
+                return View();
+            }
+            return ChuyenHuong();
         }
 
         // POST: HoaDonDatPhong/Create
@@ -79,19 +91,23 @@ namespace Hotel.Controllers
         // GET: HoaDonDatPhong/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.HoaDonDatPhongs == null)
+            if (base.KiemTraPhanQuyen("Admin") || base.KiemTraPhanQuyen("NhanVien") || base.KiemTraPhanQuyen("QuanLy"))
             {
-                return NotFound();
-            }
+                if (id == null || _context.HoaDonDatPhongs == null)
+                {
+                    return NotFound();
+                }
 
-            var hoaDonDatPhongModel = await _context.HoaDonDatPhongs.FindAsync(id);
-            if (hoaDonDatPhongModel == null)
-            {
-                return NotFound();
+                var hoaDonDatPhongModel = await _context.HoaDonDatPhongs.FindAsync(id);
+                if (hoaDonDatPhongModel == null)
+                {
+                    return NotFound();
+                }
+                ViewData["MaDp"] = new SelectList(_context.DatPhongs, "MaDp", "MaDp", hoaDonDatPhongModel.MaDp);
+                ViewData["MaNv"] = new SelectList(_context.NhanViens, "MaNv", "MaNv", hoaDonDatPhongModel.MaNv);
+                return View(hoaDonDatPhongModel);
             }
-            ViewData["MaDp"] = new SelectList(_context.DatPhongs, "MaDp", "MaDp", hoaDonDatPhongModel.MaDp);
-            ViewData["MaNv"] = new SelectList(_context.NhanViens, "MaNv", "MaNv", hoaDonDatPhongModel.MaNv);
-            return View(hoaDonDatPhongModel);
+            return base.ChuyenHuong();
         }
 
         // POST: HoaDonDatPhong/Edit/5
@@ -134,21 +150,25 @@ namespace Hotel.Controllers
         // GET: HoaDonDatPhong/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.HoaDonDatPhongs == null)
+            if (base.KiemTraPhanQuyen("Admin") || base.KiemTraPhanQuyen("QuanLy"))
             {
-                return NotFound();
-            }
+                if (id == null || _context.HoaDonDatPhongs == null)
+                {
+                    return NotFound();
+                }
 
-            var hoaDonDatPhongModel = await _context.HoaDonDatPhongs
-                .Include(h => h.MaDpNavigation)
-                .Include(h => h.MaNvNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (hoaDonDatPhongModel == null)
-            {
-                return NotFound();
-            }
+                var hoaDonDatPhongModel = await _context.HoaDonDatPhongs
+                    .Include(h => h.MaDpNavigation)
+                    .Include(h => h.MaNvNavigation)
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (hoaDonDatPhongModel == null)
+                {
+                    return NotFound();
+                }
 
-            return View(hoaDonDatPhongModel);
+                return View(hoaDonDatPhongModel);
+            }
+            return base.ChuyenHuong();
         }
 
         // POST: HoaDonDatPhong/Delete/5
@@ -156,23 +176,27 @@ namespace Hotel.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.HoaDonDatPhongs == null)
+            if (base.KiemTraPhanQuyen("Admin") || base.KiemTraPhanQuyen("QuanLy"))
             {
-                return Problem("Entity set 'QlksdbContext.HoaDonDatPhongs'  is null.");
+                if (_context.HoaDonDatPhongs == null)
+                {
+                    return Problem("Entity set 'QlksdbContext.HoaDonDatPhongs'  is null.");
+                }
+                var hoaDonDatPhongModel = await _context.HoaDonDatPhongs.FindAsync(id);
+                if (hoaDonDatPhongModel != null)
+                {
+                    _context.HoaDonDatPhongs.Remove(hoaDonDatPhongModel);
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            var hoaDonDatPhongModel = await _context.HoaDonDatPhongs.FindAsync(id);
-            if (hoaDonDatPhongModel != null)
-            {
-                _context.HoaDonDatPhongs.Remove(hoaDonDatPhongModel);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return base.ChuyenHuong();
         }
 
         private bool HoaDonDatPhongModelExists(int id)
         {
-          return (_context.HoaDonDatPhongs?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.HoaDonDatPhongs?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

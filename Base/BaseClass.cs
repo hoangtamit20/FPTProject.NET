@@ -96,21 +96,21 @@ namespace Hotel.Base
         {
             Random rd = new Random();
             string strCode = "";
-            for (int i = 0 ; i < 6 ; i++)
+            for (int i = 0; i < 6; i++)
             {
-                if (i%3 == 0)
+                if (i % 3 == 0)
                 {
-                    strCode += (char)(rd.Next(65,90));
+                    strCode += (char)(rd.Next(65, 90));
                 }
-                else if (i%2 == 0)
+                else if (i % 2 == 0)
                 {
-                    strCode += (char)(rd.Next(48,57));
+                    strCode += (char)(rd.Next(48, 57));
                 }
                 else
                 {
-                    strCode += (char)(rd.Next(97,122));
+                    strCode += (char)(rd.Next(97, 122));
                 }
-                
+
             }
             return strCode;
         }
@@ -121,20 +121,20 @@ namespace Hotel.Base
             EmailSendCode sendCode = new EmailSendCode();
             try
             {
-                MailMessage mail = new MailMessage();  
-                mail.To.Add(email);  
-                mail.From = new MailAddress(sendCode.EmailSender);  
-                mail.Subject = "Password Recovery";  
-                string Body = strCode;  
-                mail.Body = Body;  
-                mail.IsBodyHtml = true;  
-                SmtpClient smtp = new SmtpClient();  
-                smtp.Host = "smtp.gmail.com";  
-                smtp.Port = 587;  
-                smtp.UseDefaultCredentials = false;  
+                MailMessage mail = new MailMessage();
+                mail.To.Add(email);
+                mail.From = new MailAddress(sendCode.EmailSender);
+                mail.Subject = "Password Recovery";
+                string Body = strCode;
+                mail.Body = Body;
+                mail.IsBodyHtml = true;
+                SmtpClient smtp = new SmtpClient();
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.UseDefaultCredentials = false;
                 smtp.Credentials = new System.Net.NetworkCredential(sendCode.EmailSender, sendCode.Password); // Enter seders User name and password  
-                smtp.EnableSsl = true;  
-                smtp.Send(mail);  
+                smtp.EnableSsl = true;
+                smtp.Send(mail);
                 return true;
             }
             catch
