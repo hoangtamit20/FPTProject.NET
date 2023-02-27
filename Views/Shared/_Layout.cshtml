@@ -15,7 +15,27 @@
     <!-- Custom CSS -->
     <link href="~/dist/css/style.min.css" rel="stylesheet">
 </head>
-<body>    
+<body>  
+    <form asp-action="Delete" method="POST">
+        <div id="danger-header-modal" class="modal fade" tabindex="-1" aria-labelledby="danger-header-modalLabel" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header modal-colored-header bg-danger">
+                        <h4 class="modal-title" id="danger-header-modalLabel">Modal Heading</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" name="Id" id="delete">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Đóng</button>
+                        <input class="btn btn-danger" type="submit" value="Xoá"></input>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+    </form>
+
     <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
         <header class="topbar" data-navbarbg="skin6">
             <nav class="navbar top-navbar navbar-expand-lg navbar-light">
@@ -402,6 +422,7 @@
     <script
         src="~/assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js"></script>
     <script src="~/dist/js/pages/dashboards/dashboard1.min.js"></script>
+    <script src="~/js/site.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
