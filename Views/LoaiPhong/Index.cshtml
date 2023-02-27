@@ -3,12 +3,17 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@section Title_Content{
+    <div class="titleCreate col d-flex">
+        <h3 class="page-title text-truncate text-dark font-weight-medium mb-0 me-4"
+            style="line-height:34px;">Danh Sách Phòng</h3>
+        <a asp-action="Create"
+            class="btn waves-effect waves-light btn-secondary mb-0"
+            style="height:2.5em ; width:10rem">Tạo Mới</a>
+    </div>
+}
+@section Itemt_Title{
+}
 <table class="table">
     <thead>
         <tr>
@@ -21,7 +26,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.DonGia)
             </th>
-            <th></th>
+            <th>Công Cụ</th>
         </tr>
     </thead>
     <tbody>

@@ -5,14 +5,15 @@
 }
 
 <body>
-    <div class="container-fluid">
-        <div class="functionMenuButton mt-2">
-            <div class="row">
-                <div class="titleCreate col d-flex">
-                    <p class="fs-4 fw-bolder">Đặt Phòng</p>
-                </div>
-            </div>
+    @section Title_Content{
+        <div class="titleCreate col d-flex">
+            <h3 class="page-title text-truncate text-dark font-weight-medium mb-0 me-4"
+                style="line-height:34px;">Danh Sách Đặt Phòng</h3>
         </div>
+    }
+    @section Itemt_Title{
+    }
+    <div class="container-fluid">
         <div class="row">
             <div class="col">
                 <div class="tab-content" id="nav-tabContent">
