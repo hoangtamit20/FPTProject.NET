@@ -177,10 +177,6 @@ namespace Hotel.Controllers
                 await _context.SaveChangesAsync();
                 _context.Add(datphong);
                 await _context.SaveChangesAsync();
-                var phong = _context.Phongs.FirstOrDefault(p => p.Id == idP);
-                phong.TrangThaiPhong = 0;
-                _context.Update(phong);
-                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             // ViewData["MaP"] = new SelectList(_context.Phongs, "MaP", "SoPhong", datphong.MaP);

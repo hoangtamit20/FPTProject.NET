@@ -9,9 +9,8 @@ namespace Hotel.Controllers
 {
     public class TaiKhoanController : BaseController
     {
-        public TaiKhoanController(QlksdbContext context) : base(context)
-        {
-        }
+        public TaiKhoanController(QlksdbContext context)
+            : base(context) { }
 
         // GET: TaiKhoan
         public async Task<IActionResult> Index()
@@ -51,10 +50,10 @@ namespace Hotel.Controllers
         // GET: TaiKhoan/Create
         public IActionResult Create()
         {
-            if (!base.KiemTraPhanQuyen("Admin"))
-            {
-                return base.ChuyenHuong();
-            }
+            // if (!base.KiemTraPhanQuyen("Admin"))
+            // {
+            //     return base.ChuyenHuong();
+            // }
             ViewData["IdRole"] = new SelectList(_context.Roles, "IdRole", "IdRole");
             return View();
         }
@@ -64,16 +63,25 @@ namespace Hotel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserName,UserPassword,IdRole,Email,PhoneNumber,EmailConfirm,TwoFactorEnabled,TimeLockOut")] TaiKhoanModel taiKhoanModel)
+        public async Task<IActionResult> Create(
+            [Bind(
+                "Id,UserName,UserPassword,IdRole,Email,PhoneNumber,EmailConfirm,TwoFactorEnabled,TimeLockOut"
+            )]
+                TaiKhoanModel taiKhoanModel
+        )
         {
-
             if (ModelState.IsValid)
             {
                 _context.Add(taiKhoanModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdRole"] = new SelectList(_context.Roles, "IdRole", "IdRole", taiKhoanModel.IdRole);
+            ViewData["IdRole"] = new SelectList(
+                _context.Roles,
+                "IdRole",
+                "IdRole",
+                taiKhoanModel.IdRole
+            );
             return View(taiKhoanModel);
         }
 
@@ -94,7 +102,12 @@ namespace Hotel.Controllers
             {
                 return NotFound();
             }
-            ViewData["IdRole"] = new SelectList(_context.Roles, "IdRole", "IdRole", taiKhoanModel.IdRole);
+            ViewData["IdRole"] = new SelectList(
+                _context.Roles,
+                "IdRole",
+                "IdRole",
+                taiKhoanModel.IdRole
+            );
             return View(taiKhoanModel);
         }
 
@@ -103,8 +116,13 @@ namespace Hotel.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,
-        [Bind("Id,UserName,UserPassword,IdRole,Email,PhoneNumber,EmailConfirm,TwoFactorEnabled,TimeLockOut")] TaiKhoanModel taiKhoanModel)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind(
+                "Id,UserName,UserPassword,IdRole,Email,PhoneNumber,EmailConfirm,TwoFactorEnabled,TimeLockOut"
+            )]
+                TaiKhoanModel taiKhoanModel
+        )
         {
             if (id != taiKhoanModel.Id)
             {
@@ -131,7 +149,12 @@ namespace Hotel.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdRole"] = new SelectList(_context.Roles, "IdRole", "IdRole", taiKhoanModel.IdRole);
+            ViewData["IdRole"] = new SelectList(
+                _context.Roles,
+                "IdRole",
+                "IdRole",
+                taiKhoanModel.IdRole
+            );
             return View(taiKhoanModel);
         }
 
@@ -182,7 +205,6 @@ namespace Hotel.Controllers
             return (_context.TaiKhoans?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-
         public IActionResult DangNhap()
         {
             if (HttpContext.Request.Cookies["DangNhap"] != null)
@@ -199,23 +221,27 @@ namespace Hotel.Controllers
 
             if (ModelState.IsValid)
             {
-                var check = await _context.TaiKhoans.Where((TaiKhoanModel tk) =>
-                    tk.UserName == tkModel.UserName && tk.UserPassword == tkModel.UserPassword).FirstOrDefaultAsync();
+                var check = await _context.TaiKhoans
+                    .Where(
+                        (TaiKhoanModel tk) =>
+                            tk.UserName == tkModel.UserName
+                            && tk.UserPassword == tkModel.UserPassword
+                    )
+                    .FirstOrDefaultAsync();
                 if (check != null)
                 {
                     if (check.TwoFactorEnabled)
                     {
                         // hiển thị xác thực 2 lớp
-
                     }
-                    else
-                    {
-
-                    }
+                    else { }
                     // ViewData["TaiKhoan"] = check;
                     if (check.IdRole == -1) // TH: tài khoản bị khóa
                     {
-                        ModelState.AddModelError("name", "Tài khoản của bạn đã bị khóa vui lòng liên hệ admin để được hỗ trợ!");
+                        ModelState.AddModelError(
+                            "name",
+                            "Tài khoản của bạn đã bị khóa vui lòng liên hệ admin để được hỗ trợ!"
+                        );
                         return View(tkModel);
                     }
                     else
@@ -223,11 +249,11 @@ namespace Hotel.Controllers
                         string cookieValue = check.UserName + ";" + check.IdRole;
                         BaseClass bs = new BaseClass();
                         cookieValue = bs.hashString(cookieValue);
-                        HttpContext.Response.Cookies.Append("DangNhap", cookieValue, new CookieOptions
-                        {
-                            Expires = DateTime.Now.AddMonths(1),
-                            Path = "/"
-                        });
+                        HttpContext.Response.Cookies.Append(
+                            "DangNhap",
+                            cookieValue,
+                            new CookieOptions { Expires = DateTime.Now.AddMonths(1), Path = "/" }
+                        );
                         if (check.IdRole == 99) // tài khoản admin
                         {
                             return RedirectToAction("Index", "TaiKhoan");
@@ -250,7 +276,6 @@ namespace Hotel.Controllers
                     ModelState.AddModelError("name", "Sai tên đăng nhập hoặc mật khẩu!");
                     return View(tkModel);
                 }
-
             }
             return View();
         }
@@ -268,13 +293,11 @@ namespace Hotel.Controllers
                     {
                         Response.Cookies.Delete(cookie.Key);
                     }
-
                 }
                 return RedirectToAction(nameof(DangNhap));
             }
             return View();
         }
-
 
         public IActionResult QuenMatKhau()
         {
@@ -285,13 +308,14 @@ namespace Hotel.Controllers
             return base.ChuyenHuong();
         }
 
-
         [HttpPost]
         public async Task<IActionResult> QuenMatKhau(string email)
         {
             if (_context.TaiKhoans != null)
             {
-                var tk = await _context.TaiKhoans.Where(tk => tk.Email == email).FirstOrDefaultAsync();
+                var tk = await _context.TaiKhoans
+                    .Where(tk => tk.Email == email)
+                    .FirstOrDefaultAsync();
                 // var tk = (from t in _context.TaiKhoans.ToList() where t.Email == email select t).FirstOrDefault();
                 string strCodeEmail = "";
                 if (tk != null)
@@ -323,7 +347,6 @@ namespace Hotel.Controllers
             return View();
         }
 
-
         public IActionResult XacThucMail()
         {
             if (!base.KiemTraPhanQuyen(null))
@@ -334,7 +357,7 @@ namespace Hotel.Controllers
         }
 
         [HttpPost]
-        public  IActionResult XacThucMail(string code)
+        public IActionResult XacThucMail(string code)
         {
             string? strCodeEmail = TempData["strCodeEmail"].ToString();
             if (TempData["strCodeEmail"] != null)
@@ -350,7 +373,6 @@ namespace Hotel.Controllers
             //thông báo lỗi
             return View(code);
         }
-
 
         public IActionResult DoiMatKhau()
         {
@@ -370,7 +392,9 @@ namespace Hotel.Controllers
                 if (TempData["PassModelResetPass"] != null)
                 {
                     tenDN = TempData["PassModelResetPass"].ToString();
-                    var tkResetPass = _context.TaiKhoans.Where(tkModel => tkModel.UserName == tenDN).FirstOrDefault();
+                    var tkResetPass = _context.TaiKhoans
+                        .Where(tkModel => tkModel.UserName == tenDN)
+                        .FirstOrDefault();
                     if (tkResetPass != null)
                     {
                         tkResetPass.UserPassword = pass;
@@ -393,12 +417,14 @@ namespace Hotel.Controllers
             return View();
         }
 
-
         public bool KiemTraPhanQuyen(string roleName)
         {
             // bool result = false;
             int roleId = -99;
-            string? strCookie = HttpContext.Request.Cookies["DangNhap"] == null ? "" : HttpContext.Request.Cookies["DangNhap"];
+            string? strCookie =
+                HttpContext.Request.Cookies["DangNhap"] == null
+                    ? ""
+                    : HttpContext.Request.Cookies["DangNhap"];
             if (!string.IsNullOrEmpty(strCookie) && _context.TaiKhoans != null)
             {
                 BaseClass bs = new BaseClass();
@@ -438,7 +464,10 @@ namespace Hotel.Controllers
                 {
                     // cookie vẫn được lưu nhưng tài khoản trong database đã bị xóa -> tiến hành xóa cookie
                     xoaCookieDangNhap();
-                    ModelState.AddModelError("", "Tài khoản đã không còn tồn tại trên hệ thống! Cookie đã được xóa bỏ!");
+                    ModelState.AddModelError(
+                        "",
+                        "Tài khoản đã không còn tồn tại trên hệ thống! Cookie đã được xóa bỏ!"
+                    );
                 }
                 return true;
             }
@@ -458,7 +487,6 @@ namespace Hotel.Controllers
                 }
             }
         }
-
 
         public IActionResult ChuyenHuong()
         {

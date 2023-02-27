@@ -3,18 +3,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Hotel.Data;
 using Hotel.Models;
-
+using Hotel.Base;
 
 namespace Hotel.Controllers
 {
-    public class PhongController : Controller
+    public class PhongController : BaseController
     {
-        private readonly QlksdbContext _context;
-
         public PhongController(QlksdbContext context)
-        {
-            _context = context;
-        }
+            : base(context) { }
 
         // GET: Phong
         public async Task<IActionResult> Index(
@@ -23,35 +19,42 @@ namespace Hotel.Controllers
             int? pageNumber
         )
         {
-            if (searchString != null)
+            if (
+                base.KiemTraPhanQuyen("Admin")
+                || base.KiemTraPhanQuyen("NhanVien")
+                || base.KiemTraPhanQuyen("QuanLy")
+            )
             {
-                pageNumber = 1;
-            }
-            else
-            {
-                searchString = currentFilter;
-            }
-
-            ViewData["CurrentFilter"] = searchString;
-            var phongs = (from p in _context.Phongs orderby p.SoPhong descending select p)
-                .Include(k => k.MaLpNavigation)
-                .Include(k => k.MaTvpNavigation);
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                phongs = phongs
-                    .Where(p => p.SoPhong.ToString().Contains(searchString))
-                    .OrderByDescending(p => p.SoPhong)
+                if (searchString != null)
+                {
+                    pageNumber = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+                ViewData["CurrentFilter"] = searchString;
+                var phongs = (from p in _context.Phongs orderby p.SoPhong descending select p)
                     .Include(k => k.MaLpNavigation)
                     .Include(k => k.MaTvpNavigation);
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    phongs = phongs
+                        .Where(p => p.SoPhong.ToString().Contains(searchString))
+                        .OrderByDescending(p => p.SoPhong)
+                        .Include(k => k.MaLpNavigation)
+                        .Include(k => k.MaTvpNavigation);
+                }
+                int pageSize = 2;
+                return View(
+                    await PaginatedList<PhongModel>.CreateAsync(
+                        phongs.AsNoTracking(),
+                        pageNumber ?? 1,
+                        pageSize
+                    )
+                );
             }
-            int pageSize = 2;
-            return View(
-                await PaginatedList<PhongModel>.CreateAsync(
-                    phongs.AsNoTracking(),
-                    pageNumber ?? 1,
-                    pageSize
-                )
-            );
+            return base.ChuyenHuong();
         }
 
         // GET: Phong/Details/5
@@ -86,7 +89,8 @@ namespace Hotel.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Id,MaP,SoPhong,HinhAnh,MaLp,MaTvp,TrangThaiPhong, MoTa, LoaiGiuong")] PhongModel phong
+            [Bind("Id,MaP,SoPhong,HinhAnh,MaLp,MaTvp,TrangThaiPhong, MoTa, LoaiGiuong")]
+                PhongModel phong
         )
         {
             phong.CreatedAt = DateTime.Now;
@@ -138,7 +142,8 @@ namespace Hotel.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Id,MaP,SoPhong,HinhAnh,TrangThaiPhong,MaLp,MaTvp,MoTa, LoaiGiuong")] PhongModel phong
+            [Bind("Id,MaP,SoPhong,HinhAnh,TrangThaiPhong,MaLp,MaTvp,MoTa, LoaiGiuong")]
+                PhongModel phong
         )
         {
             phong.UpdatedAt = DateTime.Now;
@@ -201,6 +206,38 @@ namespace Hotel.Controllers
                 ViewData["error"] = "Phòng đã đặt không thể xoá!";
             }
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult DanhSachPhongDatPhong()
+        {
+            var phong = new List<PhongModel>();
+            if (_context.Phongs != null)
+            {
+                phong = _context.Phongs
+                    .Where(p => p.TrangThaiPhong == 1)
+                    .Include(p => p.MaLpNavigation)
+                    .OrderByDescending(p => p.SoPhong)
+                    .ToList();
+            }
+            return View(phong);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DanhSachPhongDatPhong(int? id)
+        {
+            //1 là rảnh, 0 là đã đặt, 2 là tất cả
+            var listPhong = new List<PhongModel>();
+            if (_context.Phongs != null)
+            {
+                listPhong = await _context.Phongs
+                    .Where(p => p.TrangThaiPhong == 1)
+                    .Include(p => p.MaLpNavigation)
+                    .OrderByDescending(p => p.SoPhong)
+                    .ToListAsync();
+            }
+            return View(listPhong);
         }
 
         private bool PhongExists(int id)
