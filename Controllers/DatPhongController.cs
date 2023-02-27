@@ -85,7 +85,7 @@ namespace Hotel.Controllers
                     MaDp = dp.MaDp
                 }
             ).ToList();
-            var listobject = new List<object>();            
+            var listobject = new List<object>();
             if (id == 0)
             {
                 ViewData["checkNav"] = 0;
@@ -286,6 +286,101 @@ namespace Hotel.Controllers
         private bool DatphongExists(int id)
         {
             return (_context.DatPhongs?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+
+
+
+        public async Task<IActionResult> ThanhToanDatPhong(int? idDP)
+        {
+            string tenDN = "hoangtamit20";
+            var nhanVien = await _context.NhanViens.Include(nv => nv.UserNameNavigation).Where(nv => nv.UserName == tenDN).FirstOrDefaultAsync();
+            if (idDP == null || _context.DatPhongs == null)
+            {
+                return NotFound();
+            }
+            var datPhong = await _context.DatPhongs.Include(datPhong => datPhong.MaPNavigation).
+                                Include(datPhong => datPhong.MaKhNavigation).
+                                Include(datPhong => datPhong.MaPNavigation.MaLpNavigation).
+                                Include(datPhong => datPhong.DatDichVus).FirstOrDefaultAsync(dp => dp.Id == idDP);
+
+            var datDV = await _context.DatDichVus.Include(ddv => ddv.MaDvNavigation).
+                                Include(ddv => ddv.MaDpNavigation).
+                                Where(ddv => ddv.MaDp == datPhong.MaDp).ToListAsync();
+
+            var hoaDon = await _context.HoaDonDatPhongs.Include(hddp => hddp.MaNvNavigation).Include(hddp => hddp.MaDpNavigation).OrderByDescending(hddp => hddp.MaHddp).ToListAsync();
+            if (datPhong == null)
+            {
+                return NotFound();
+            }
+            List<object> list = new List<object>();
+            list.Add(datPhong);
+            list.Add(datDV);
+            list.Add(hoaDon);
+            list.Add(nhanVien);
+            return View(list);
+        }
+
+
+
+        // string MaHddp, DateTime NgayHd, string MaNv, string MaDp
+        [HttpPost]
+        public async Task<IActionResult> ThanhToanDatPhong(int? Id, HoaDonDatPhongModel hoaDon)
+        {
+            HoaDonDatPhongModel hoaDonDatPhong = new HoaDonDatPhongModel(){
+                MaHddp = hoaDon.MaHddp,
+                NgayHd = hoaDon.NgayHd,
+                MaNv = hoaDon.MaNv,
+                MaDp = hoaDon.MaDp
+            };
+            if (Id != null)
+            {
+                if (_context.DatPhongs != null && _context.Phongs != null)
+                {
+                    var dat = await _context.DatPhongs.Where(dp => dp.MaDp == hoaDonDatPhong.MaDp).FirstOrDefaultAsync();
+                    var datPhong = await _context.DatPhongs.FindAsync(Id);
+                    if (datPhong != null)
+                    {
+                        try
+                        {
+                            _context.Add(hoaDonDatPhong);
+                            await _context.SaveChangesAsync();
+                            var phong = await _context.Phongs.Where(p => p.MaP == datPhong.MaP).FirstOrDefaultAsync();
+                            if (phong != null)
+                            {
+                                try
+                                {
+                                    phong.TrangThaiPhong = 0; // reset về trạng thái phòng trống
+                                    _context.Update(phong);
+                                    await _context.SaveChangesAsync();
+                                }
+                                catch (SqlException ex)
+                                {
+                                    ModelState.AddModelError("", "Trạng thái phòng không tồn tại!\n" + ex.Message);
+                                }
+                            }
+                        }
+                        catch (SqlException ex)
+                        {
+                            ModelState.AddModelError("", "Thêm hóa đơn thất bại!\n" + ex.Message);
+                        }
+                    }
+                }
+                return RedirectToAction("Index", "HoaDonDatPhong");
+            }
+            return RedirectToAction("ThanhToanDatPhong","DatPhong", new {@idDP=Id});
+        }
+
+        [HttpPost]
+        public IActionResult GeneratePDF(string html)
+        {
+            // System.Console.WriteLine(html);
+            html = html.Replace("StrTag", "<").Replace("EndTag", ">");
+            var htmlToPdf = new HtmlToPdf();
+            var pdfDocumnet = htmlToPdf.ConvertHtmlString(html);
+            byte[] pdfFile = pdfDocumnet.Save();
+            pdfDocumnet.Close();
+            return File(pdfFile, "application/pdf", "hoadon.pdf");
         }
     }
 }

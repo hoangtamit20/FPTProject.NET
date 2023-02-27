@@ -20,35 +20,31 @@
                 <nav>
                     <form asp-action="Index" method="post" id="form-btn-dp">
                         <input type="text" name="id" id="form-btn-id" hidden>
-                        <input type="text" name="id" id="check_nav" value="@ViewBag.checkNav"
-                            hidden>
+                        <input type="text" name="id" id="check_nav" value="@ViewBag.checkNav" hidden>
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <button class="nav-link nav-btn-p" id="nav-home-tab"
-                                data-bs-toggle="tab"
-                                data-bs-target="#nav-home" type="submit" role="tab"
-                                aria-controls="nav-home" aria-selected="true" data-id="2">Tất Cả
+                            <button class="nav-link nav-btn-p" id="nav-home-tab" data-bs-toggle="tab"
+                                data-bs-target="#nav-home" type="submit" role="tab" aria-controls="nav-home"
+                                aria-selected="true" data-id="2">Tất Cả
                                 Phòng</button>
-                            <button class="nav-link nav-btn-p"
-                                id="nav-profile-tab" data-bs-toggle="tab"
-                                data-bs-target="#nav-profile" type="submit" role="tab"
-                                aria-controls="nav-profile" aria-selected="false" data-id="1">Phòng
+                            <button class="nav-link nav-btn-p" id="nav-profile-tab" data-bs-toggle="tab"
+                                data-bs-target="#nav-profile" type="submit" role="tab" aria-controls="nav-profile"
+                                aria-selected="false" data-id="1">Phòng
                                 Trống</button>
-                            <button class="nav-link nav-btn-p"
-                                id="nav-contact-tab" data-bs-toggle="tab"
-                                data-bs-target="#nav-contact" type="submit" role="tab"
-                                aria-controls="nav-contact" aria-selected="false" data-id="0">Phòng
+                            <button class="nav-link nav-btn-p" id="nav-contact-tab" data-bs-toggle="tab"
+                                data-bs-target="#nav-contact" type="submit" role="tab" aria-controls="nav-contact"
+                                aria-selected="false" data-id="0">Phòng
                                 Đã Đặt</button>
                         </div>
 
                     </form>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
-                        aria-labelledby="nav-home-tab">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                         <table class="table table-bordered mt-2">
                             <thead class="text-center align-middle">
                                 <tr>
                                     <th scope="col">#</th>
+                                    <th scope="col">ID đặt phòng</th>
                                     <th scope="col">Hình Ảnh</th>
                                     <th scope="col">Số Phòng</th>
                                     <th scope="col">Loại Phòng</th>
@@ -65,8 +61,15 @@
                                     {
                                         <tr>
                                             <th scope="row">@(soTT++)</th>
+                                                @foreach(var i in listDp)
+                                                {
+                                                    if (i.MaP == item.MaP)
+                                                    {
+                                                        <td>@i.MaDp</td>
+                                                    }
+                                                }
                                             <td class="container-img-dp">
-                                                <a asp-action="Details" asp-route-id = "@item.">
+                                                <a asp-action="Details" asp-route-id="@item.">
                                                     <img src="/images/User.jpg" alt="" class="img-dp">
                                                 </a>
                                             </td>
@@ -81,12 +84,10 @@
                                                 <td>Giường Đôi</td>
                                             }
                                             <td>@item.MoTa</td>
-                                            @if
-                                    (item.TrangThaiPhong == 1)
+                                            @if(item.TrangThaiPhong == 1)
                                             {
                                                 <td>
-                                                    <div class="badge bg-success text-wrap p-2"
-                                                        style="width: 6rem;">
+                                                    <div class="badge bg-success text-wrap p-2" style="width: 6rem;">
                                                         Đang Rảnh
                                                     </div>
                                                 </td>
@@ -100,8 +101,7 @@
                                             else if (item.TrangThaiPhong == 2)
                                             {
                                                 <td>
-                                                    <div class="badge bg-warning text-wrap p-2"
-                                                        style="width: 6rem;">
+                                                    <div class="badge bg-warning text-wrap p-2" style="width: 6rem;">
                                                         Đang Bận
                                                     </div>
                                                 </td>
@@ -110,18 +110,18 @@
                                             else
                                             {
                                                 <td>
-                                                    <div class="badge bg-danger text-wrap p-2"
-                                                        style="width: 6rem;">
+                                                    <div class="badge bg-danger text-wrap p-2" style="width: 6rem;">
                                                         Đã Đặt
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-secondary col p-1 m-1">Thanh
-                                                        Toán</button>
+                                                    @* <button type="button" class="btn btn-secondary col p-1 m-1">Thanh
+                                                        Toán</button> *@
                                                     @foreach (var a in listDp)
                                                     {
                                                         if (a.MaP == @item.MaP)
                                                         {
+                                                            @Html.ActionLink("Thanh Toán", "ThanhToanDatPhong", "DatPhong", new {@idDP = a.Id}, new {@class = "btn btn-secondary"})
                                                             @Html.ActionLink("Thêm Dịch Vụ", "Create", "DatDichVu", new
                                         {@idDP = a.Id}, new {@class = "btn btn-primary p-1"})
                                                         }
