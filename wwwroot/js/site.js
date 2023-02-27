@@ -5,12 +5,9 @@
 //your javascript goes here
 $("body").on("click","#btnPdf",function(e){
     e.preventDefault();
-    // var theText = $('#pdfContainer').html();
-    // console.log(theText)
+    console.log('da click');
     var strHtml = $("#pdfContainer").html();
     strHtml = strHtml.replace(/</g, "StrTag").replace(/>/g, "EndTag");
-
-
     $("#pdfValue").val(strHtml)
     console.log($("#pdfValue").val())
     $("#formPDF").submit()

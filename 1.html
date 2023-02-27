@@ -1,4 +1,4 @@
-﻿@using Hotel.Base;
+@using Hotel.Base;
 
 @{
 BaseClass bs = new BaseClass();
@@ -306,7 +306,8 @@ System.Console.WriteLine(ex.Message);
                                     </svg>
                                     Account Setting</a>
                                 <div class="dropdown-divider"></div>
-                                @Html.ActionLink("Đăng xuất", "DangXuat", "TaiKhoan", null, new {@class = "dropdown-item text-dark"})
+                                @Html.ActionLink("Đăng xuất", "DangXuat", "TaiKhoan", null, new {@class = "dropdown-item
+                                text-dark"})
                                 <div class="dropdown-divider"></div>
                                 <div class="pl-4 p-3"><a href="javascript:void(0)" class="btn btn-sm btn-info">View
                                         Profile</a></div>
@@ -373,8 +374,7 @@ System.Console.WriteLine(ex.Message);
 
                         <li class="list-divider"></li>
                         <li class="nav-small-cap"><span class="hide-menu">Components</span></li>
-                        <partial name="_DatPhongPartial"/>
-                        @* <li class="sidebar-item"> <a class="sidebar-link has-arrow" href="javascript:void(0)"
+                        <li class="sidebar-item"> <a class="sidebar-link has-arrow" href="javascript:void(0)"
                                 aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round"
@@ -400,7 +400,7 @@ System.Console.WriteLine(ex.Message);
                                         </span></a>
                                 </li>
                             </ul>
-                        </li> *@
+                        </li>
                         <li class="sidebar-item"> <a class="sidebar-link has-arrow" href="javascript:void(0)"
                                 aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
